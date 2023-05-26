@@ -4,6 +4,7 @@ import os
 import logging
 from flask import Flask
 from flask import jsonify, request, redirect, send_from_directory
+from gevent import pywsgi
 
 log = logging.getLogger('werkzeug')
 log.disabled = True
@@ -39,6 +40,17 @@ def fetch_random():
         return f'{p.protocol}://{p.ip}:{p.port}'
     else:
         return ''
+
+@app.route('/fetch_randomByCountryCodeAndProtocol', methods=['GET'])
+def fetch_randomByCountryCode():
+    args = request.args.to_dict()
+    proxies = conn.getValidatedRandomByCountryCodeAndProtocol(args['countryCode'],args['protocol'])
+    if len(proxies) > 0:
+        p = proxies[0]
+        return f'{p.ip}:{p.port}'
+    else:
+        return ''
+
 
 ############# 新增加接口int ################        
 
@@ -235,7 +247,9 @@ def main(proc_lock):
     if proc_lock is not None:
         conn.set_proc_lock(proc_lock)
     # 因为默认sqlite3中，同一个数据库连接不能在多线程环境下使用，所以这里需要禁用flask的多线程
-    app.run(host='0.0.0.0', port=5000, threaded=False)
+    # app.run(host='0.0.0.0', port=5000, threaded=False,debug=True)
+    server = pywsgi.WSGIServer(('0.0.0.0',5000),app)
+    server.serve_forever()
 
 if __name__ == '__main__':
     main(None)

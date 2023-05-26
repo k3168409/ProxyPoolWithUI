@@ -1,8 +1,9 @@
-FROM python:3.7.0
+FROM python:3.9.16
 
-WORKDIR /proxy
+WORKDIR /ProxyPoolWithUI
 
-ADD requirements.txt /proxy
+ADD . .
+
 RUN pip3 config set global.index-url https://mirrors.aliyun.com/pypi/simple/
 RUN pip3 install --upgrade pip
 RUN pip3 install -r requirements.txt

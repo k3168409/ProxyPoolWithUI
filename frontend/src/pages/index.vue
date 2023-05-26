@@ -120,6 +120,11 @@ const columns = [
         scopedSlots: { customRender: 'latency' }
     },
     {
+        title: '国家',
+        dataIndex: 'country',
+        scopedSlots: { customRender: 'country' }
+    },
+    {
         title: '上次验证时间',
         dataIndex: 'validate_date',
         customRender: (date) => {

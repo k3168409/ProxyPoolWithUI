@@ -2,7 +2,8 @@
 """
 验证器逻辑
 """
-
+import traceback
+import json
 import sys
 import socket
 import threading
@@ -78,19 +79,41 @@ def validate_once(proxy):
         'http': f'{proxy.protocol}://{proxy.ip}:{proxy.port}',
         'https': f'{proxy.protocol}://{proxy.ip}:{proxy.port}'
     }
-    if VALIDATE_METHOD == "GET":
+    try:
         r = requests.get(VALIDATE_URL, timeout=VALIDATE_TIMEOUT, proxies=proxies)
-        r.encoding = "utf-8"
-        html = r.text
-        if VALIDATE_KEYWORD in html:
-            return True
+
+        if r.status_code == 200:
+            try:
+                data = json.loads(r.text)
+                if data['ip'] != proxy.ip:
+                    return False
+                proxy.country = data['country']
+                proxy.country_code = data['country_code']
+                req = requests.get('https://www.tiktok.com/node/common/web-privacy-config?tea=1', timeout=VALIDATE_TIMEOUT, proxies=proxies)
+                if req.status_code == 200:
+                    logging.info(
+                        f"验证类型{proxy.protocol}  IP：{proxy.ip}  PORT:{proxy.port}, 国家:{proxy.country} , 国家代码：{proxy.country_code}成功", )
+                    return True
+                return False
+            except Exception as e:
+                # logging.info(f"获取IP信息失败 ,返回消息{r.text} 错误：{e}")
+                return False
+    except:
         return False
-    else:
-        r = requests.get(VALIDATE_URL, timeout=VALIDATE_TIMEOUT, proxies=proxies, allow_redirects=False)
-        resp_headers = r.headers
-        if VALIDATE_HEADER in resp_headers.keys() and VALIDATE_KEYWORD in resp_headers[VALIDATE_HEADER]:
-            return True
-        return False
+
+    # if VALIDATE_METHOD == "GET":
+    #     r = requests.get(VALIDATE_URL, timeout=VALIDATE_TIMEOUT, proxies=proxies)
+    #     r.encoding = "utf-8"
+    #     html = r.text
+    #     if VALIDATE_KEYWORD in html:
+    #         return True
+    #     return False
+    # else:
+    #     r = requests.get(VALIDATE_URL, timeout=VALIDATE_TIMEOUT, proxies=proxies, allow_redirects=False)
+    #     resp_headers = r.headers
+    #     if VALIDATE_HEADER in resp_headers.keys() and VALIDATE_KEYWORD in resp_headers[VALIDATE_HEADER]:
+    #         return True
+    #     return False
 
 def validate_thread(in_que, out_que):
     """

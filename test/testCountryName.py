@@ -1,0 +1,3 @@
+
+
+cls = ['AD', 'AE', 'AF', 'AL', 'AM', 'AO', 'AR', 'AT', 'AU', 'AZ', 'BA', 'BD', 'BG', 'BJ', 'BO', 'BR', 'BT', 'CA', 'CD', 'CH', 'CL', 'CM', 'CN', 'CO', 'CR', 'CY', 'CZ', 'DE', 'DO', 'EC', 'EG', 'ES', 'FI', 'FR', 'GA', 'GB', 'GE', 'GH', 'GN', 'GQ', 'GT', 'HK', 'HN', 'HU', 'ID', 'IE', 'IL', 'IN', 'IQ', 'IR', 'IT', 'JM', 'JP', 'KE', 'KG', 'KH', 'KR', 'KZ', 'LA', 'LT', 'LU', 'LV', 'LY', 'MA', 'MD', 'ME', 'MM', 'MN', 'MT', 'MW', 'MX', 'MY', 'MZ', 'NG', 'NI', 'NL', 'NO', 'NP', 'NZ', 'PA', 'PE', 'PH', 'PK', 'PL', 'PR', 'PS', 'PT', 'PY', 'QA', 'RO', 'RS', 'RU', 'RW', 'SA', 'SC', 'SE', 'SG', 'SK', 'SO', 'SS', 'SV', 'SY', 'TH', 'TN', 'TR', 'TW', 'TZ', 'UA', 'UG', 'US', 'UY', 'UZ', 'VE', 'VN', 'YT', 'ZA', 'ZW']

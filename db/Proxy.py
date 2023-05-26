@@ -19,6 +19,8 @@ class Proxy(object):
         validate_date TIMESTAMP,
         to_validate_date TIMESTAMP NOT NULL,
         validate_failed_cnt INTEGER NOT NULL,
+        country VARCHAR(255),
+        country_code VARCHAR(255),
         PRIMARY KEY (protocol, ip, port)
     )
     """,
@@ -41,6 +43,8 @@ class Proxy(object):
         self.validate_date = None
         self.to_validate_date = datetime.datetime.now()
         self.validate_failed_cnt = 0
+        self.country = None
+        self.country_code = None
     
     def params(self):
         """
@@ -50,7 +54,8 @@ class Proxy(object):
             self.fetcher_name,
             self.protocol, self.ip, self.port,
             self.validated, self.latency,
-            self.validate_date, self.to_validate_date, self.validate_failed_cnt
+            self.validate_date, self.to_validate_date,
+            self.validate_failed_cnt, self.country, self.country_code
         )
     
     def to_dict(self):
@@ -66,7 +71,9 @@ class Proxy(object):
             'latency': self.latency,
             'validate_date': str(self.validate_date) if self.validate_date is not None else None,
             'to_validate_date': str(self.to_validate_date) if self.to_validate_date is not None else None,
-            'validate_failed_cnt': self.validate_failed_cnt
+            'validate_failed_cnt': self.validate_failed_cnt,
+            'country': self.country,
+            'country_code': self.country_code,
         }
     
     @staticmethod
@@ -75,7 +82,7 @@ class Proxy(object):
         将sqlite返回的一行解析为Proxy
         row : sqlite返回的一行
         """
-        assert len(row) == 9
+        assert len(row) == 11
         p = Proxy()
         p.fetcher_name = row[0]
         p.protocol = row[1]
@@ -86,6 +93,8 @@ class Proxy(object):
         p.validate_date = row[6]
         p.to_validate_date = row[7]
         p.validate_failed_cnt = row[8]
+        p.country = row[9]
+        p.country_code = row[10]
         return p
     
     def validate(self, success, latency):

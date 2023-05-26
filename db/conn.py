@@ -52,7 +52,7 @@ def pushNewFetch(fetcher_name, protocol, ip, port):
             UPDATE proxies SET fetcher_name=?,to_validate_date=? WHERE protocol=? AND ip=? AND port=?
         """, (p.fetcher_name, min(datetime.datetime.now(), old_p.to_validate_date), p.protocol, p.ip, p.port))
     else:
-        c.execute('INSERT INTO proxies VALUES (?,?,?,?,?,?,?,?,?)', p.params())
+        c.execute('INSERT INTO proxies VALUES (?,?,?,?,?,?,?,?,?,?,?)', p.params())
     c.close()
     conn.commit()
     conn_lock.release()
@@ -103,10 +103,10 @@ def pushValidateResult(proxy, success, latency):
     else:
         conn.execute("""
             UPDATE proxies
-            SET fetcher_name=?,validated=?,latency=?,validate_date=?,to_validate_date=?,validate_failed_cnt=?
+            SET fetcher_name=?,validated=?,latency=?,validate_date=?,to_validate_date=?,validate_failed_cnt=?,country=?,country_code=?
             WHERE protocol=? AND ip=? AND port=?
         """, (
-            p.fetcher_name, p.validated, p.latency, p.validate_date, p.to_validate_date, p.validate_failed_cnt,
+            p.fetcher_name, p.validated, p.latency, p.validate_date, p.to_validate_date, p.validate_failed_cnt,p.country, p.country_code,
             p.protocol, p.ip, p.port
         ))
     conn.commit()
@@ -130,7 +130,28 @@ def getValidatedRandom(max_count):
     conn_lock.release()
     proc_lock.release()
     return proxies
-    
+
+def getValidatedRandomByCountryCodeAndProtocol(countryCode,protocol):
+        """
+        从通过了验证的代理中，随机选择max_count个代理返回
+        max_count<=0表示不做数量限制
+        返回 : list[Proxy]
+        """
+        conn_lock.acquire()
+        proc_lock.acquire()
+        r = conn.execute('SELECT * FROM proxies WHERE validated=? and country_code=? and protocol=? ORDER BY latency asc,validate_date DESC LIMIT ?', (True, countryCode, protocol, 1))
+        proxies = [Proxy.decode(row) for row in r]
+        r.close()
+        if len(proxies) > 0:
+            p = proxies[0]
+            conn.execute("""
+                       UPDATE proxies SET latency='', validated=? WHERE protocol=? AND ip=? AND port=?
+                   """, (False, p.protocol, p.ip, p.port))
+        conn.commit()
+        conn_lock.release()
+        proc_lock.release()
+        return proxies
+
     #新增方法
 def get_by_protocol(protocol, max_count):
     """
