@@ -17,7 +17,14 @@ from db import conn
 from config import PROC_VALIDATOR_SLEEP, VALIDATE_THREAD_NUM
 from config import VALIDATE_METHOD, VALIDATE_KEYWORD, VALIDATE_HEADER, VALIDATE_URL, VALIDATE_TIMEOUT, VALIDATE_MAX_FAILS
 
-logging.basicConfig(stream=sys.stdout, format="%(asctime)s-%(levelname)s:%(name)s:%(message)s", level='INFO')
+isDebug = True if sys.gettrace() else False
+if isDebug:
+    logging.basicConfig(format="%(asctime)s-%(levelname)s:%(name)s:%(message)s",
+                        level='DEBUG')
+else:
+    logging.basicConfig(format="%(asctime)s-%(levelname)s:%(name)s:%(message)s",
+                        level='INFO')
+
 
 def main(proc_lock):
     """
@@ -81,8 +88,8 @@ def validate_once(proxy):
     }
     try:
         r = requests.get(VALIDATE_URL, timeout=VALIDATE_TIMEOUT, proxies=proxies)
-
-        if r.status_code == 200:
+        logging.debug(f'验证IP返回消息 ： {r.text}')
+        if r.status_code == 200 and ("ip" in r.text):
             try:
                 data = json.loads(r.text)
                 if data['ip'] != proxy.ip:
@@ -90,7 +97,8 @@ def validate_once(proxy):
                 proxy.country = data['country']
                 proxy.country_code = data['country_code']
                 req = requests.get('https://www.tiktok.com/node/common/web-privacy-config?tea=1', timeout=VALIDATE_TIMEOUT, proxies=proxies)
-                if req.status_code == 200:
+                logging.debug(f'验证Tiktok返回消息 ： {req.text}')
+                if req.status_code == 200 and (VALIDATE_KEYWORD in req.text):
                     logging.info(
                         f"验证类型{proxy.protocol}  IP：{proxy.ip}  PORT:{proxy.port}, 国家:{proxy.country} , 国家代码：{proxy.country_code}成功", )
                     return True

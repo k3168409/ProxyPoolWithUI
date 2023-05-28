@@ -27,6 +27,6 @@ VALIDATE_THREAD_NUM = 200 # 验证线程数量
 VALIDATE_URL = 'http://ip234.in/ip.json'
 VALIDATE_METHOD = 'GET' # 验证方式，可选：GET、HEAD
 VALIDATE_HEADER = 'location' # 仅用于HEAD验证方式，百度响应头Server字段KEYWORD可填：bfe
-VALIDATE_KEYWORD = 'ip'
+VALIDATE_KEYWORD = 'TikTok'
 VALIDATE_TIMEOUT = 10 # 超时时间，单位s
 VALIDATE_MAX_FAILS = 3

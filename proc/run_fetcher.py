@@ -14,7 +14,14 @@ from config import PROC_FETCHER_SLEEP
 from func_timeout import func_set_timeout
 from func_timeout.exceptions import FunctionTimedOut
 
-logging.basicConfig(stream=sys.stdout, format="%(asctime)s-%(levelname)s:%(name)s:%(message)s", level='INFO')
+isDebug = True if sys.gettrace() else False
+if isDebug:
+    logging.basicConfig(format="%(asctime)s-%(levelname)s:%(name)s:%(message)s",
+                        level='DEBUG')
+else:
+    logging.basicConfig(format="%(asctime)s-%(levelname)s:%(name)s:%(message)s",
+                        level='INFO')
+
 
 def main(proc_lock):
     """

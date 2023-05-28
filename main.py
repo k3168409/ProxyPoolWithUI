@@ -7,6 +7,7 @@ import time
 from proc import run_fetcher, run_validator
 from api import api
 import multiprocessing
+import logging
 
 # 进程锁
 proc_lock = multiprocessing.Lock()

@@ -248,7 +248,9 @@ def main(proc_lock):
         conn.set_proc_lock(proc_lock)
     # 因为默认sqlite3中，同一个数据库连接不能在多线程环境下使用，所以这里需要禁用flask的多线程
     # app.run(host='0.0.0.0', port=5000, threaded=False,debug=True)
-    server = pywsgi.WSGIServer(('0.0.0.0',5000),app)
+    app.config['COMPRESS_DEBUG'] = False
+    app.config['ASSETS_DEBUG'] = 'debug'
+    server = pywsgi.WSGIServer(('0.0.0.0', 5000), app)
     server.serve_forever()
 
 if __name__ == '__main__':

@@ -1,5 +1,6 @@
 # 简易好用的免费代理池
-
+nohup python -u test.py > test.log 2>&1 & //打印日志
+nohup xxxx >/dev/null 2>&1 & //不打印日志
 [![](https://img.shields.io/badge/python-3.6+-brightgreen)](https://github.com/OxOOo/ProxyPoolWithUI)
 
 兼容系统：
