@@ -89,7 +89,7 @@ def validate_once(proxy):
     try:
         r = requests.get(VALIDATE_URL, timeout=VALIDATE_TIMEOUT, proxies=proxies)
         logging.debug(f'验证IP返回消息 ： {r.text}')
-        if r.status_code == 200 and ("ip" in r.text):
+        if r.status_code == 200:
             try:
                 data = json.loads(r.text)
                 if data['ip'] != proxy.ip:
